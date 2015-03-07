@@ -110,13 +110,16 @@
 	<script src="js/Util.js"></script>
 	<script src="js/Grid.js"></script>
 	<script src="js/Slider.js"></script>
+	<script src="js/Ball.js"></script>
 	<!-- /build -->
 	<script>
 		var util = new Util();
 		var grid = new Grid(util.gridRowsNum, util.gridColsNum);
 		grid.init();
-		var slider = new Slider(3);
+		var slider = new Slider((util.gridColsNum+1)/2-(Math.floor(util.sliderLength/2)));
 		slider.init();
+		var ball = new Ball(1, [(util.gridColsNum+1)/2, util.gridRowsNum-1]);
+		ball.init();
 	</script>
 </body>
 </html>
