@@ -1,8 +1,8 @@
 function Util() {
 
-	this.gridRowsNum = 10;
+	this.gridRowsNum = 40;
 	this.gridColsNum = 31;
-	this.sliderLength = 5;
+	this.sliderLength = 31;
 	this.ballSpeed = 20;
 
 }
