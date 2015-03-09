@@ -24,9 +24,18 @@ Slider.prototype.moveRight = function() {
 Slider.prototype.moveByKey = function(event) {
 	if (event.keyCode == 37) {
 		slider.moveLeft();
-
+		if (ball.docked) {
+			if (ball.coordinate[0] > 1) {
+				ball.stepLeft();
+			}
+		}
 	} else if (event.keyCode == 39) {
 		slider.moveRight();
+		if (ball.docked) {
+			if (ball.coordinate[0] < util.gridColsNum) {
+				ball.stepRight();
+			}
+		}
 	}
 }
 Slider.prototype.keyBoardControl = function() {

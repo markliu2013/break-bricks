@@ -2,9 +2,10 @@ function Util() {
 
 	this.gridRowsNum = 40;
 	this.gridColsNum = 31;
-	this.sliderLength = 31;
+	this.sliderLength = 7;
 	this.ballSpeed = 500;
 	this.ballSpeed2 = 10;
+	this.sliderTime = 2000;
 
 }
 Util.prototype.getRandomNum = function(min, max) {

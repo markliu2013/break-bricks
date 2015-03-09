@@ -6,72 +6,61 @@ function Ball(direction, coordinate) {
 	this.movedSteps = 0;
 	this.movingSteps = 0;
 	this.speed = util.ballSpeed;
+	this.docked = false;
+	this.dockTimeout = null;
 }
 Ball.prototype.draw = function() {
 	jQuery('#grid .row:nth-child('+this.coordinate[1]+') .col:nth-child('+this.coordinate[0]+')').addClass('on');
 }
-Ball.prototype.stepTop = function () {
+Ball.prototype.preStep = function() {
 	var ballNode = jQuery('#grid .row:nth-child('+this.coordinate[1]+') .col:nth-child('+this.coordinate[0]+')');
 	if (ballNode.hasClass('brick')) {
 		brick.blockCounts--;
 		ballNode.removeClass('brick');
 	}
 	ballNode.removeClass('on');
+}
+Ball.prototype.stepTop = function () {
+	this.preStep();
 	jQuery('#grid .row:nth-child('+(this.coordinate[1]-1)+') .col:nth-child('+this.coordinate[0]+')').addClass('on');
 	this.coordinate = [this.coordinate[0], this.coordinate[1]-1];
 }
 Ball.prototype.stepRightTop = function () {
-	var ballNode = jQuery('#grid .row:nth-child('+this.coordinate[1]+') .col:nth-child('+this.coordinate[0]+')');
-	if (ballNode.hasClass('brick')) {
-		brick.blockCounts--;
-		ballNode.removeClass('brick');
-	}
-	ballNode.removeClass('on');
+	this.preStep();
 	jQuery('#grid .row:nth-child('+(this.coordinate[1]-1)+') .col:nth-child('+(this.coordinate[0]+1)+')').addClass('on');
 	this.coordinate = [this.coordinate[0]+1, this.coordinate[1]-1];
 }
+Ball.prototype.stepRight = function () {
+	this.preStep();
+	jQuery('#grid .row:nth-child('+this.coordinate[1]+') .col:nth-child('+(this.coordinate[0]+1)+')').addClass('on');
+	this.coordinate = [this.coordinate[0]+1, this.coordinate[1]];
+}
 Ball.prototype.stepRightBottom = function () {
-	var ballNode = jQuery('#grid .row:nth-child('+this.coordinate[1]+') .col:nth-child('+this.coordinate[0]+')');
-	if (ballNode.hasClass('brick')) {
-		brick.blockCounts--;
-		ballNode.removeClass('brick');
-	}
-	ballNode.removeClass('on');
+	this.preStep();
 	jQuery('#grid .row:nth-child('+(this.coordinate[1]+1)+') .col:nth-child('+(this.coordinate[0]+1)+')').addClass('on');
 	this.coordinate = [this.coordinate[0]+1, this.coordinate[1]+1];
 }
 Ball.prototype.stepBottom = function () {
-	var ballNode = jQuery('#grid .row:nth-child('+this.coordinate[1]+') .col:nth-child('+this.coordinate[0]+')');
-	if (ballNode.hasClass('brick')) {
-		brick.blockCounts--;
-		ballNode.removeClass('brick');
-	}
-	ballNode.removeClass('on');
+	this.preStep();
 	jQuery('#grid .row:nth-child('+(this.coordinate[1]+1)+') .col:nth-child('+this.coordinate[0]+')').addClass('on');
 	this.coordinate = [this.coordinate[0], this.coordinate[1]+1];
 }
+Ball.prototype.stepLeft = function () {
+	this.preStep();
+	jQuery('#grid .row:nth-child('+this.coordinate[1]+') .col:nth-child('+(this.coordinate[0]-1)+')').addClass('on');
+	this.coordinate = [this.coordinate[0]-1, this.coordinate[1]];
+}
 Ball.prototype.stepLeftBottom = function () {
-	var ballNode = jQuery('#grid .row:nth-child('+this.coordinate[1]+') .col:nth-child('+this.coordinate[0]+')');
-	if (ballNode.hasClass('brick')) {
-		brick.blockCounts--;
-		ballNode.removeClass('brick');
-	}
-	ballNode.removeClass('on');
+	this.preStep();
 	jQuery('#grid .row:nth-child('+(this.coordinate[1]+1)+') .col:nth-child('+(this.coordinate[0]-1)+')').addClass('on');
 	this.coordinate = [this.coordinate[0]-1, this.coordinate[1]+1];
 }
 Ball.prototype.stepLeftTop = function () {
-	var ballNode = jQuery('#grid .row:nth-child('+this.coordinate[1]+') .col:nth-child('+this.coordinate[0]+')');
-	if (ballNode.hasClass('brick')) {
-		brick.blockCounts--;
-		ballNode.removeClass('brick');
-	}
-	ballNode.removeClass('on');
+	this.preStep();
 	jQuery('#grid .row:nth-child('+(this.coordinate[1]-1)+') .col:nth-child('+(this.coordinate[0]-1)+')').addClass('on');
 	this.coordinate = [this.coordinate[0]-1, this.coordinate[1]-1];
 }
 Ball.prototype.bounce = function() {
-	console.log(brick.blockCounts);
 	switch (this.direction) {
 		case 1:
 			this.direction = 5;
@@ -128,6 +117,10 @@ Ball.prototype.bounce = function() {
 	}
 }
 Ball.prototype.move = function(step) {
+	if (step == 0) {
+		this.bounce();
+		return;
+	}
 	var thisBall = this;
 	thisBall.movedSteps = 0;
 	thisBall.movingSteps = step;
@@ -155,8 +148,14 @@ Ball.prototype.move = function(step) {
 				thisBall.stepRightBottom();
 				if (++thisBall.movedSteps == step) {
 					clearInterval(thisBall.thread);
-					if (thisBall.coordinate[0] == util.gridColsNum || jQuery('#grid .row:nth-child('+util.gridRowsNum+') .col:nth-child('+(thisBall.coordinate[0]+1)+')').hasClass('on')) {
+					if (thisBall.coordinate[0] == util.gridColsNum) {
 						thisBall.bounce();
+					} else if (jQuery('#grid .row:nth-child('+util.gridRowsNum+') .col:nth-child('+(thisBall.coordinate[0]+1)+')').hasClass('on')) {
+						thisBall.docked = true;
+						thisBall.dockTimeout = setTimeout(function() {
+							thisBall.bounce();
+							thisBall.docked = false;
+						}, util.sliderTime);
 					} else {//game over
 						thisBall.stepRightBottom();
 					}
@@ -169,7 +168,11 @@ Ball.prototype.move = function(step) {
 				if (++thisBall.movedSteps == step) {
 					clearInterval(thisBall.thread);
 					if (jQuery('#grid .row:nth-child('+util.gridRowsNum+') .col:nth-child('+thisBall.coordinate[0]+')').hasClass('on')) {
-						thisBall.bounce();
+						thisBall.docked = true;
+						thisBall.dockTimeout = setTimeout(function() {
+							thisBall.bounce();
+							thisBall.docked = false;
+						}, util.sliderTime);
 					} else {//game over
 						thisBall.stepBottom();
 					}
@@ -181,14 +184,19 @@ Ball.prototype.move = function(step) {
 				thisBall.stepLeftBottom();
 				if (++thisBall.movedSteps == step) {
 					clearInterval(thisBall.thread);
-					if (thisBall.coordinate[0] == 1 || jQuery('#grid .row:nth-child('+util.gridRowsNum+') .col:nth-child('+(thisBall.coordinate[0]-1)+')').hasClass('on')) {
+					if (thisBall.coordinate[0] == 1) {
 						thisBall.bounce();
+					} else if (jQuery('#grid .row:nth-child('+util.gridRowsNum+') .col:nth-child('+(thisBall.coordinate[0]-1)+')').hasClass('on')) {
+						thisBall.docked = true;
+						thisBall.dockTimeout = setTimeout(function() {
+							thisBall.bounce();
+							thisBall.docked = false;
+						}, util.sliderTime);
 					} else {//game over
 						thisBall.stepLeftBottom();
 					}
 				}
 			}, thisBall.speed);
-
 			break;
 		case 8:
 			thisBall.thread = setInterval(function() {
@@ -205,15 +213,29 @@ Ball.prototype.keyBoardControl = function() {
 	var thisBall = this;
 	jQuery(document).on('keydown', function(event) {
 		if (event.keyCode == 32) {
-			clearInterval(thisBall.thread);
-			var step = thisBall.movingSteps - thisBall.movedSteps;
-			thisBall.speed = util.ballSpeed2;
-			thisBall.move(step);
+			if (thisBall.docked) {
+				clearTimeout(thisBall.dockTimeout);
+				thisBall.bounce();
+				thisBall.docked = false;
+			} else {
+				clearInterval(thisBall.thread);
+				var step = thisBall.movingSteps - thisBall.movedSteps;
+				thisBall.speed = util.ballSpeed2;
+				thisBall.move(step);
+			}
 			return false;
 		}
 	});
 	jQuery(document).on('keyup', function(event) {
-		if (event.keyCode == 32) {
+		if (thisBall.docked) {
+			if (event.keyCode == 37) {
+				thisBall.direction = 6;
+			} else if (event.keyCode == 38) {
+				thisBall.direction = 5;
+			} else if (event.keyCode == 39) {
+				thisBall.direction = 4;
+			}
+		} else if (event.keyCode == 32) {
 			clearInterval(thisBall.thread);
 			var step = thisBall.movingSteps - thisBall.movedSteps;
 			thisBall.speed = util.ballSpeed;
@@ -222,10 +244,15 @@ Ball.prototype.keyBoardControl = function() {
 		}
 	});
 }
+Ball.prototype.sleep = function(millisecond) {
+
+}
+
+
 Ball.prototype.init = function() {
 	this.draw();
 	this.keyBoardControl();
-	var random = util.getRandomNum(2,3);
+	var random = util.getRandomNum(3,3);
 	switch (random) {
 		case 1:
 			this.direction = 1;
