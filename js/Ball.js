@@ -2,6 +2,10 @@
 function Ball(direction, coordinate) {
 	this.direction = direction;
 	this.coordinate = coordinate;
+	this.thread = null;
+	this.movedSteps = 0;
+	this.movingSteps = 0;
+	this.speed = util.ballSpeed;
 }
 Ball.prototype.draw = function() {
 	jQuery('#grid .row:nth-child('+this.coordinate[1]+') .col:nth-child('+this.coordinate[0]+')').addClass('on');
@@ -91,89 +95,105 @@ Ball.prototype.bounce = function() {
 			}
 			break;
 	}
-
 }
 Ball.prototype.move = function(step) {
 	var thisBall = this;
+	thisBall.movedSteps = 0;
+	thisBall.movingSteps = step;
 	switch (thisBall.direction) {
 		case 1:
-			var i = 0;
-			var stepThread = setInterval(function() {
+			thisBall.thread = setInterval(function() {
 				thisBall.stepTop();
-				if (++i === step) {
-					clearInterval(stepThread);
+				if (++thisBall.movedSteps == step) {
+					clearInterval(thisBall.thread);
 					thisBall.bounce();
 				}
-			}, util.ballSpeed);
+			}, thisBall.speed);
 			break;
 		case 2:
-			var i = 0;
-			var stepThread = setInterval(function() {
+			thisBall.thread = setInterval(function() {
 				thisBall.stepRightTop();
-				if (++i === step) {
-					clearInterval(stepThread);
+				if (++thisBall.movedSteps == step) {
+					clearInterval(thisBall.thread);
 					thisBall.bounce();
 				}
-			}, util.ballSpeed);
+			}, thisBall.speed);
 			break;
 		case 4:
-			var i = 0;
-			var stepThread = setInterval(function() {
+			thisBall.thread = setInterval(function() {
 				thisBall.stepRightBottom();
-				if (++i === step) {
-					clearInterval(stepThread);
+				if (++thisBall.movedSteps == step) {
+					clearInterval(thisBall.thread);
 					if (thisBall.coordinate[0] == util.gridColsNum || jQuery('#grid .row:nth-child('+util.gridRowsNum+') .col:nth-child('+(thisBall.coordinate[0]+1)+')').hasClass('on')) {
 						thisBall.bounce();
 					} else {//game over
 						thisBall.stepRightBottom();
 					}
 				}
-			}, util.ballSpeed);
+			}, thisBall.speed);
 			break;
 		case 5:
-			var i = 0;
-			var stepThread = setInterval(function() {
+			thisBall.thread = setInterval(function() {
 				thisBall.stepBottom();
-				if (++i === step) {
-					clearInterval(stepThread);
+				if (++thisBall.movedSteps == step) {
+					clearInterval(thisBall.thread);
 					if (jQuery('#grid .row:nth-child('+util.gridRowsNum+') .col:nth-child('+thisBall.coordinate[0]+')').hasClass('on')) {
 						thisBall.bounce();
 					} else {//game over
 						thisBall.stepBottom();
 					}
 				}
-			}, util.ballSpeed);
+			}, thisBall.speed);
 			break;
 		case 6:
-			var i = 0;
-			var stepThread = setInterval(function() {
+			thisBall.thread = setInterval(function() {
 				thisBall.stepLeftBottom();
-				if (++i === step) {
-					clearInterval(stepThread);
+				if (++thisBall.movedSteps == step) {
+					clearInterval(thisBall.thread);
 					if (thisBall.coordinate[0] == 1 || jQuery('#grid .row:nth-child('+util.gridRowsNum+') .col:nth-child('+(thisBall.coordinate[0]-1)+')').hasClass('on')) {
 						thisBall.bounce();
 					} else {//game over
 						thisBall.stepLeftBottom();
 					}
 				}
-			}, util.ballSpeed);
+			}, thisBall.speed);
 
 			break;
 		case 8:
-			var i = 0;
-			var stepThread = setInterval(function() {
+			thisBall.thread = setInterval(function() {
 				thisBall.stepLeftTop();
-				if (++i === step) {
-					clearInterval(stepThread);
+				if (++thisBall.movedSteps == step) {
+					clearInterval(thisBall.thread);
 					thisBall.bounce();
 				}
-			}, util.ballSpeed);
+			}, thisBall.speed);
 			break;
 	}
 }
-
+Ball.prototype.keyBoardControl = function() {
+	var thisBall = this;
+	jQuery(document).on('keydown', function(event) {
+		if (event.keyCode == 32) {
+			clearInterval(thisBall.thread);
+			var step = thisBall.movingSteps - thisBall.movedSteps;
+			thisBall.speed = util.ballSpeed2;
+			thisBall.move(step);
+			return false;
+		}
+	});
+	jQuery(document).on('keyup', function(event) {
+		if (event.keyCode == 32) {
+			clearInterval(thisBall.thread);
+			var step = thisBall.movingSteps - thisBall.movedSteps;
+			thisBall.speed = util.ballSpeed;
+			thisBall.move(step);
+			return false;
+		}
+	});
+}
 Ball.prototype.init = function() {
 	this.draw();
+	this.keyBoardControl();
 	var random = util.getRandomNum(2,3);
 	switch (random) {
 		case 1:
