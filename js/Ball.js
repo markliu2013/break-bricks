@@ -11,36 +11,67 @@ Ball.prototype.draw = function() {
 	jQuery('#grid .row:nth-child('+this.coordinate[1]+') .col:nth-child('+this.coordinate[0]+')').addClass('on');
 }
 Ball.prototype.stepTop = function () {
-	jQuery('#grid .row:nth-child('+this.coordinate[1]+') .col:nth-child('+this.coordinate[0]+')').removeClass('on');
+	var ballNode = jQuery('#grid .row:nth-child('+this.coordinate[1]+') .col:nth-child('+this.coordinate[0]+')');
+	if (ballNode.hasClass('brick')) {
+		brick.blockCounts--;
+		ballNode.removeClass('brick');
+	}
+	ballNode.removeClass('on');
 	jQuery('#grid .row:nth-child('+(this.coordinate[1]-1)+') .col:nth-child('+this.coordinate[0]+')').addClass('on');
 	this.coordinate = [this.coordinate[0], this.coordinate[1]-1];
 }
 Ball.prototype.stepRightTop = function () {
-	jQuery('#grid .row:nth-child('+this.coordinate[1]+') .col:nth-child('+this.coordinate[0]+')').removeClass('on');
+	var ballNode = jQuery('#grid .row:nth-child('+this.coordinate[1]+') .col:nth-child('+this.coordinate[0]+')');
+	if (ballNode.hasClass('brick')) {
+		brick.blockCounts--;
+		ballNode.removeClass('brick');
+	}
+	ballNode.removeClass('on');
 	jQuery('#grid .row:nth-child('+(this.coordinate[1]-1)+') .col:nth-child('+(this.coordinate[0]+1)+')').addClass('on');
 	this.coordinate = [this.coordinate[0]+1, this.coordinate[1]-1];
 }
 Ball.prototype.stepRightBottom = function () {
-	jQuery('#grid .row:nth-child('+this.coordinate[1]+') .col:nth-child('+this.coordinate[0]+')').removeClass('on');
+	var ballNode = jQuery('#grid .row:nth-child('+this.coordinate[1]+') .col:nth-child('+this.coordinate[0]+')');
+	if (ballNode.hasClass('brick')) {
+		brick.blockCounts--;
+		ballNode.removeClass('brick');
+	}
+	ballNode.removeClass('on');
 	jQuery('#grid .row:nth-child('+(this.coordinate[1]+1)+') .col:nth-child('+(this.coordinate[0]+1)+')').addClass('on');
 	this.coordinate = [this.coordinate[0]+1, this.coordinate[1]+1];
 }
 Ball.prototype.stepBottom = function () {
-	jQuery('#grid .row:nth-child('+this.coordinate[1]+') .col:nth-child('+this.coordinate[0]+')').removeClass('on');
+	var ballNode = jQuery('#grid .row:nth-child('+this.coordinate[1]+') .col:nth-child('+this.coordinate[0]+')');
+	if (ballNode.hasClass('brick')) {
+		brick.blockCounts--;
+		ballNode.removeClass('brick');
+	}
+	ballNode.removeClass('on');
 	jQuery('#grid .row:nth-child('+(this.coordinate[1]+1)+') .col:nth-child('+this.coordinate[0]+')').addClass('on');
 	this.coordinate = [this.coordinate[0], this.coordinate[1]+1];
 }
 Ball.prototype.stepLeftBottom = function () {
-	jQuery('#grid .row:nth-child('+this.coordinate[1]+') .col:nth-child('+this.coordinate[0]+')').removeClass('on');
+	var ballNode = jQuery('#grid .row:nth-child('+this.coordinate[1]+') .col:nth-child('+this.coordinate[0]+')');
+	if (ballNode.hasClass('brick')) {
+		brick.blockCounts--;
+		ballNode.removeClass('brick');
+	}
+	ballNode.removeClass('on');
 	jQuery('#grid .row:nth-child('+(this.coordinate[1]+1)+') .col:nth-child('+(this.coordinate[0]-1)+')').addClass('on');
 	this.coordinate = [this.coordinate[0]-1, this.coordinate[1]+1];
 }
 Ball.prototype.stepLeftTop = function () {
-	jQuery('#grid .row:nth-child('+this.coordinate[1]+') .col:nth-child('+this.coordinate[0]+')').removeClass('on');
+	var ballNode = jQuery('#grid .row:nth-child('+this.coordinate[1]+') .col:nth-child('+this.coordinate[0]+')');
+	if (ballNode.hasClass('brick')) {
+		brick.blockCounts--;
+		ballNode.removeClass('brick');
+	}
+	ballNode.removeClass('on');
 	jQuery('#grid .row:nth-child('+(this.coordinate[1]-1)+') .col:nth-child('+(this.coordinate[0]-1)+')').addClass('on');
 	this.coordinate = [this.coordinate[0]-1, this.coordinate[1]-1];
 }
 Ball.prototype.bounce = function() {
+	console.log(brick.blockCounts);
 	switch (this.direction) {
 		case 1:
 			this.direction = 5;

@@ -111,6 +111,7 @@
 	<script src="js/Grid.js"></script>
 	<script src="js/Slider.js"></script>
 	<script src="js/Ball.js"></script>
+	<script src="js/Bricks.js"></script>
 	<!-- /build -->
 	<script>
 		var util = new Util();
@@ -121,6 +122,8 @@
 		var ball = new Ball(1, [(util.gridColsNum+1)/2, util.gridRowsNum-1]);
 		ball.init();
 
+		var brick = new Bricks();
+		brick.init();
 	</script>
 </body>
 </html>
