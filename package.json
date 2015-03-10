@@ -1,0 +1,36 @@
+{
+	"name": "bricksGame",
+	"title": "JavaScript Breaking Brick Game",
+	"description": "The Breaking bricks game written by pure JavaScript",
+	"version": "1.0.0",
+	"homepage": "http://www.markliublog.com/javascript-break-bricks.html",
+	"author": {
+		"name": "Mark Liu",
+		"email": "markliu2013@gmail.com",
+		"url": "http://www.markliublog.com"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/markliu2013/break-bricks.git"
+	},
+	"bugs": {
+		"url": "https://github.com/markliu2013/break-bricks/issues"
+	},
+	"licenses": [
+		{
+			"type": "MIT",
+			"url": "http://mit-license.org/"
+		}
+	],
+	"devDependencies": {
+		"grunt": "~0.4.5",
+		"grunt-contrib-concat": "*",
+		"grunt-contrib-cssmin": "*",
+		"grunt-contrib-uglify": "*",
+		"grunt-processhtml": "*",
+		"grunt-contrib-htmlmin": "*",
+		"grunt-contrib-clean": "*",
+		"grunt-contrib-watch": "*",
+		"grunt-ftpush": "*"
+	}
+}
