@@ -4,8 +4,10 @@ function Util() {
 	this.gridColsNum = 31;
 	this.sliderLength = 7;
 	this.ballSpeed = 500;
-	this.ballSpeed2 = 10;
-	this.sliderTime = 2000;
+	this.ballSpeed2 = 10;//when you are pressing space key, this speed will apply.
+	this.dockTime = 2000;
+
+
 
 }
 Util.prototype.getRandomNum = function(min, max) {

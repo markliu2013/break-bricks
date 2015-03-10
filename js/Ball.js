@@ -5,7 +5,7 @@ function Ball(direction, coordinate) {
 	this.thread = null;
 	this.movedSteps = 0;
 	this.movingSteps = 0;
-	this.speed = util.ballSpeed;
+	this.speed = game.util.ballSpeed;
 	this.docked = false;
 	this.dockTimeout = null;
 }
@@ -15,8 +15,12 @@ Ball.prototype.draw = function() {
 Ball.prototype.preStep = function() {
 	var ballNode = jQuery('#grid .row:nth-child('+this.coordinate[1]+') .col:nth-child('+this.coordinate[0]+')');
 	if (ballNode.hasClass('brick')) {
-		brick.blockCounts--;
+		game.addScore();
+		game.bricks.blockCounts--;
 		ballNode.removeClass('brick');
+		if (game.bricks.blockCounts == 0) {
+			game.stopGame();
+		}
 	}
 	ballNode.removeClass('on');
 }
@@ -64,53 +68,53 @@ Ball.prototype.bounce = function() {
 	switch (this.direction) {
 		case 1:
 			this.direction = 5;
-			this.move(util.gridRowsNum-2);
+			this.move(game.util.gridRowsNum-2);
 			break;
 		case 2:
 			if (this.coordinate[1] == 1) {
 				this.direction = 4;
-				var maxStep = util.gridColsNum - this.coordinate[0] > util.gridRowsNum - 2 ? util.gridRowsNum - 2 : util.gridColsNum - this.coordinate[0];
+				var maxStep = game.util.gridColsNum - this.coordinate[0] > game.util.gridRowsNum - 2 ? game.util.gridRowsNum - 2 : game.util.gridColsNum - this.coordinate[0];
 				this.move(maxStep);
-			} else if (this.coordinate[0] == util.gridColsNum) {
+			} else if (this.coordinate[0] == game.util.gridColsNum) {
 				this.direction = 8;
-				var maxStep = util.gridColsNum-1 > this.coordinate[1]-1 ? this.coordinate[1]-1:util.gridColsNum-1;
+				var maxStep = game.util.gridColsNum-1 > this.coordinate[1]-1 ? this.coordinate[1]-1:game.util.gridColsNum-1;
 				this.move(maxStep);
 			}
 			break;
 		case 4:
-			if (this.coordinate[1] == util.gridRowsNum - 1) {//encounter slider
+			if (this.coordinate[1] == game.util.gridRowsNum - 1) {//encounter slider
 				this.direction = 2;
-				var maxStep = util.gridColsNum - this.coordinate[0] > util.gridRowsNum - 2 ? util.gridRowsNum - 2 : util.gridColsNum - this.coordinate[0];
+				var maxStep = game.util.gridColsNum - this.coordinate[0] > game.util.gridRowsNum - 2 ? game.util.gridRowsNum - 2 : game.util.gridColsNum - this.coordinate[0];
 				this.move(maxStep);
-			} else if (this.coordinate[0] == util.gridColsNum) {
+			} else if (this.coordinate[0] == game.util.gridColsNum) {
 				this.direction = 6;
-				var maxStep = util.gridRowsNum - this.coordinate[1] - 1 > util.gridColsNum - 1 ? util.gridColsNum - 1 : util.gridRowsNum - this.coordinate[1] - 1;
+				var maxStep = game.util.gridRowsNum - this.coordinate[1] - 1 > game.util.gridColsNum - 1 ? game.util.gridColsNum - 1 : game.util.gridRowsNum - this.coordinate[1] - 1;
 				this.move(maxStep);
 			}
 			break;
 		case 5:
 			this.direction = 1;
-			this.move(util.gridRowsNum-2);
+			this.move(game.util.gridRowsNum-2);
 			break;
 		case 6:
-			if (this.coordinate[1] == util.gridRowsNum - 1) {
+			if (this.coordinate[1] == game.util.gridRowsNum - 1) {
 				this.direction = 8;
-				var maxStep = this.coordinate[0] - 1 > util.gridRowsNum - 2 ? util.gridRowsNum - 2 : this.coordinate[0] - 1;
+				var maxStep = this.coordinate[0] - 1 > game.util.gridRowsNum - 2 ? game.util.gridRowsNum - 2 : this.coordinate[0] - 1;
 				this.move(maxStep);
 			} else if (this.coordinate[0] == 1) {
 				this.direction = 4;
-				var maxStep = util.gridColsNum - 1 > util.gridRowsNum - this.coordinate[1] - 1 ? util.gridRowsNum - this.coordinate[1] - 1 : util.gridColsNum - 1;
+				var maxStep = game.util.gridColsNum - 1 > game.util.gridRowsNum - this.coordinate[1] - 1 ? game.util.gridRowsNum - this.coordinate[1] - 1 : game.util.gridColsNum - 1;
 				this.move(maxStep);
 			}
 			break;
 		case 8:
 			if (this.coordinate[1] == 1) {
 				this.direction = 6;
-				var maxStep = this.coordinate[0]-1 > util.gridRowsNum - 2 ? util.gridRowsNum - 2 : this.coordinate[0]-1;
+				var maxStep = this.coordinate[0]-1 > game.util.gridRowsNum - 2 ? game.util.gridRowsNum - 2 : this.coordinate[0]-1;
 				this.move(maxStep);
 			} else if (this.coordinate[0] == 1) {
 				this.direction = 2;
-				var maxStep = util.gridColsNum-1 > this.coordinate[1]-1 ? this.coordinate[1]-1:util.gridColsNum-1;
+				var maxStep = game.util.gridColsNum-1 > this.coordinate[1]-1 ? this.coordinate[1]-1:game.util.gridColsNum-1;
 				this.move(maxStep);
 			}
 			break;
@@ -148,16 +152,17 @@ Ball.prototype.move = function(step) {
 				thisBall.stepRightBottom();
 				if (++thisBall.movedSteps == step) {
 					clearInterval(thisBall.thread);
-					if (thisBall.coordinate[0] == util.gridColsNum) {
+					if (thisBall.coordinate[0] == game.util.gridColsNum) {
 						thisBall.bounce();
-					} else if (jQuery('#grid .row:nth-child('+util.gridRowsNum+') .col:nth-child('+(thisBall.coordinate[0]+1)+')').hasClass('on')) {
+					} else if (jQuery('#grid .row:nth-child('+game.util.gridRowsNum+') .col:nth-child('+(thisBall.coordinate[0]+1)+')').hasClass('on')) {
 						thisBall.docked = true;
 						thisBall.dockTimeout = setTimeout(function() {
 							thisBall.bounce();
 							thisBall.docked = false;
-						}, util.sliderTime);
+						}, game.util.dockTime);
 					} else {//game over
 						thisBall.stepRightBottom();
+						game.stopGame();
 					}
 				}
 			}, thisBall.speed);
@@ -167,14 +172,15 @@ Ball.prototype.move = function(step) {
 				thisBall.stepBottom();
 				if (++thisBall.movedSteps == step) {
 					clearInterval(thisBall.thread);
-					if (jQuery('#grid .row:nth-child('+util.gridRowsNum+') .col:nth-child('+thisBall.coordinate[0]+')').hasClass('on')) {
+					if (jQuery('#grid .row:nth-child('+game.util.gridRowsNum+') .col:nth-child('+thisBall.coordinate[0]+')').hasClass('on')) {
 						thisBall.docked = true;
 						thisBall.dockTimeout = setTimeout(function() {
 							thisBall.bounce();
 							thisBall.docked = false;
-						}, util.sliderTime);
+						}, game.util.dockTime);
 					} else {//game over
 						thisBall.stepBottom();
+						game.stopGame();
 					}
 				}
 			}, thisBall.speed);
@@ -186,14 +192,15 @@ Ball.prototype.move = function(step) {
 					clearInterval(thisBall.thread);
 					if (thisBall.coordinate[0] == 1) {
 						thisBall.bounce();
-					} else if (jQuery('#grid .row:nth-child('+util.gridRowsNum+') .col:nth-child('+(thisBall.coordinate[0]-1)+')').hasClass('on')) {
+					} else if (jQuery('#grid .row:nth-child('+game.util.gridRowsNum+') .col:nth-child('+(thisBall.coordinate[0]-1)+')').hasClass('on')) {
 						thisBall.docked = true;
 						thisBall.dockTimeout = setTimeout(function() {
 							thisBall.bounce();
 							thisBall.docked = false;
-						}, util.sliderTime);
+						}, game.util.dockTime);
 					} else {//game over
 						thisBall.stepLeftBottom();
+						game.stopGame();
 					}
 				}
 			}, thisBall.speed);
@@ -212,7 +219,7 @@ Ball.prototype.move = function(step) {
 Ball.prototype.keyBoardControl = function() {
 	var thisBall = this;
 	jQuery(document).on('keydown', function(event) {
-		if (event.keyCode == 32) {
+		if (event.keyCode == 32 && game.status == 1) {//I need to change this solution to use offKey
 			if (thisBall.docked) {
 				clearTimeout(thisBall.dockTimeout);
 				thisBall.bounce();
@@ -220,14 +227,15 @@ Ball.prototype.keyBoardControl = function() {
 			} else {
 				clearInterval(thisBall.thread);
 				var step = thisBall.movingSteps - thisBall.movedSteps;
-				thisBall.speed = util.ballSpeed2;
+				thisBall.speed = game.util.ballSpeed2;
 				thisBall.move(step);
 			}
+			event.preventDefault();
 			return false;
 		}
 	});
 	jQuery(document).on('keyup', function(event) {
-		if (thisBall.docked) {
+		if (thisBall.docked && game.status == 1) {//I need to change this solution to use offKey
 			if (event.keyCode == 37) {
 				thisBall.direction = 6;
 			} else if (event.keyCode == 38) {
@@ -235,38 +243,75 @@ Ball.prototype.keyBoardControl = function() {
 			} else if (event.keyCode == 39) {
 				thisBall.direction = 4;
 			}
-		} else if (event.keyCode == 32) {
+		} else if (event.keyCode == 32 && game.status == 1) {
 			clearInterval(thisBall.thread);
 			var step = thisBall.movingSteps - thisBall.movedSteps;
-			thisBall.speed = util.ballSpeed;
+			thisBall.speed = game.util.ballSpeed;
 			thisBall.move(step);
 			return false;
 		}
 	});
-}
-Ball.prototype.sleep = function(millisecond) {
-
 }
 
 
 Ball.prototype.init = function() {
 	this.draw();
 	this.keyBoardControl();
-	var random = util.getRandomNum(3,3);
+	var random = game.util.getRandomNum(1,3);
 	switch (random) {
 		case 1:
 			this.direction = 1;
-			this.move(util.gridRowsNum-2);
+			this.move(game.util.gridRowsNum-2);
 			break;
 		case 2:
 			this.direction = 2;
-			var maxStep = util.gridRowsNum-2 > util.gridColsNum - this.coordinate[0] ? util.gridColsNum - this.coordinate[0] : util.gridRowsNum-2;
+			var maxStep = game.util.gridRowsNum-2 > game.util.gridColsNum - this.coordinate[0] ? game.util.gridColsNum - this.coordinate[0] : game.util.gridRowsNum-2;
 			this.move(maxStep);
 			break;
 		case 3:
 			this.direction = 8;
-			var maxStep = util.gridRowsNum-2 > this.coordinate[0]-1 ? this.coordinate[0]-1 : util.gridRowsNum-2;
+			var maxStep = game.util.gridRowsNum-2 > this.coordinate[0]-1 ? this.coordinate[0]-1 : game.util.gridRowsNum-2;
 			this.move(maxStep);
 			break;
+	}
+}
+Ball.prototype.reset = function() {
+	clearInterval(this.thread);
+	clearInterval(this.dockTimeout);
+	this.coordinate = [(game.util.gridColsNum+1)/2, game.util.gridRowsNum-1];
+	this.speed = game.util.ballSpeed;
+	this.draw();
+	var random = game.util.getRandomNum(1,3);
+	switch (random) {
+		case 1:
+			this.direction = 1;
+			this.move(game.util.gridRowsNum-2);
+			break;
+		case 2:
+			this.direction = 2;
+			var maxStep = game.util.gridRowsNum-2 > game.util.gridColsNum - this.coordinate[0] ? game.util.gridColsNum - this.coordinate[0] : game.util.gridRowsNum-2;
+			this.move(maxStep);
+			break;
+		case 3:
+			this.direction = 8;
+			var maxStep = game.util.gridRowsNum-2 > this.coordinate[0]-1 ? this.coordinate[0]-1 : game.util.gridRowsNum-2;
+			this.move(maxStep);
+			break;
+	}
+}
+Ball.prototype.pause = function() {
+	var self = this;
+	clearInterval(self.thread);
+	clearTimeout(self.dockTimeout);
+}
+Ball.prototype.resume = function() {
+	var self = this;
+	if (this.docked) {
+		self.dockTimeout = setTimeout(function() {
+			self.bounce();
+			self.docked = false;
+		}, game.util.dockTime);
+	} else {
+		this.move(this.movingSteps - this.movedSteps);
 	}
 }
