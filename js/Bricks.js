@@ -1,4 +1,7 @@
-
+/**
+ * Class Bricks
+ * @constructor
+ */
 function Bricks() {
 	this.rowCount = 0;
 	this.blockCounts = 0;

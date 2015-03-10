@@ -1,4 +1,8 @@
-
+/**
+ * Class Slider
+ * @param header
+ * @constructor
+ */
 function Slider(header) {
 	this.header = header;
 }

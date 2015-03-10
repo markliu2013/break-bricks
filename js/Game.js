@@ -1,4 +1,7 @@
-
+/**
+ * Class Game
+ * @constructor
+ */
 function Game() {
 	this.status = 0;// 0 stopped  1 running  2 paused
 	this.grid = null;

@@ -1,3 +1,7 @@
+/**
+ * Class Util
+ * @constructor
+ */
 function Util() {
 
 	this.gridRowsNum = 40;
@@ -6,8 +10,6 @@ function Util() {
 	this.ballSpeed = 500;
 	this.ballSpeed2 = 10;//when you are pressing space key, this speed will apply.
 	this.dockTime = 2000;
-
-
 
 }
 Util.prototype.getRandomNum = function(min, max) {

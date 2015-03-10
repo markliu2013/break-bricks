@@ -1,4 +1,9 @@
-
+/**
+ * Class Ball
+ * @param direction
+ * @param coordinate
+ * @constructor
+ */
 function Ball(direction, coordinate) {
 	this.direction = direction;
 	this.coordinate = coordinate;
@@ -252,8 +257,6 @@ Ball.prototype.keyBoardControl = function() {
 		}
 	});
 }
-
-
 Ball.prototype.init = function() {
 	this.draw();
 	this.keyBoardControl();
