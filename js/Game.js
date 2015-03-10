@@ -32,8 +32,8 @@ Game.prototype.init = function() {
 }
 Game.prototype.getConfig = function() {
 	var result = {};
-	result.gridRowsNum = localStorage.getItem('gridRowsNum') || this.util.gridRowsNum;
-	result.gridColsNum = localStorage.getItem('gridColsNum') || this.util.gridColsNum;
+	result.gridRowsNum = localStorage.getItem('bricks-gridRowsNum') || this.util.gridRowsNum;
+	result.gridColsNum = localStorage.getItem('bricks-gridColsNum') || this.util.gridColsNum;
 	result.ballSpeed = localStorage.getItem('ballSpeed') || this.util.ballSpeed;
 	result.dockTime = localStorage.getItem('dockTime') || this.util.dockTime;
 	result.sliderLength = localStorage.getItem('sliderLength') || this.util.sliderLength;
@@ -45,16 +45,16 @@ Game.prototype.saveConfigAsLocalStorage = function() {
 	var ballSpeed = jQuery('#select-ball-speed').val();
 	var dockTime = jQuery('#select-dock-time').val();
 	var sliderLength = jQuery('#select-slider-length').val();
-	localStorage.setItem('gridRowsNum', gridRowsNum);
-	localStorage.setItem('gridColsNum', gridColsNum);
+	localStorage.setItem('bricks-gridRowsNum', gridRowsNum);
+	localStorage.setItem('bricks-gridColsNum', gridColsNum);
 	localStorage.setItem('ballSpeed', ballSpeed);
 	localStorage.setItem('dockTime', dockTime);
 	localStorage.setItem('sliderLength', sliderLength);
 }
 Game.prototype.resetConfig = function() {
 	var defaultConfig = new Util();
-	localStorage.setItem('gridRowsNum', defaultConfig.gridRowsNum);
-	localStorage.setItem('gridColsNum', defaultConfig.gridColsNum);
+	localStorage.setItem('bricks-gridRowsNum', defaultConfig.gridRowsNum);
+	localStorage.setItem('bricks-gridColsNum', defaultConfig.gridColsNum);
 	localStorage.setItem('ballSpeed', defaultConfig.ballSpeed);
 	localStorage.setItem('dockTime', defaultConfig.dockTime);
 	localStorage.setItem('sliderLength', defaultConfig.sliderLength);
