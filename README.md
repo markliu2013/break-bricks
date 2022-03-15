@@ -1,7 +1,7 @@
 # JavaScript Breaking Bricks Game
 
 This is a Breaking Bricks Game written use JavaScript.
-[try to play](https://mark.zfwhub.com/c/bricks/index.html).
+[try to play](http://demo.jiukuaitech.com/break-bricks/index.html).
 If you have any suggestion or bug to post, [click here](https://github.com/markliu2013/break-bricks/issues/new).
 
 
