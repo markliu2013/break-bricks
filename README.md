@@ -1,8 +1,6 @@
 # JavaScript Breaking Bricks Game
 
 This is a Breaking Bricks Game written use JavaScript.
-[try to play](https://markliu2013.github.io/break-bricks/index.html).
-If you have any suggestion or bug to post, [click here](https://github.com/markliu2013/break-bricks/issues/new).
 
 
 ## Installing
